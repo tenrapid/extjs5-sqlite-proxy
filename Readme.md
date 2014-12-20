@@ -1,2 +1,4 @@
-# ExtJS 5 SQLite Proxy for node-sqlite3 and WebSQL
+# ExtJS5 SQLite Proxy
+
+Provides a Ext.data.Proxy implementation for use with node-sqlite3 and WebSQL
 
