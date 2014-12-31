@@ -32,7 +32,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			console.log('[E]\t Proxy exception:', operation.getError());
 			Ext.each(errors, function(error) {
 				console.log('\t', error.error.message, error);
-			})
+			});
 		});
 	},
 
@@ -358,7 +358,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		if (!table.uniqueIdStrategy) {
 			delete data[table.idProperty];
 		}
-		columnData = me.getColumnData(table, data)
+		columnData = me.getColumnData(table, data);
 		columns = columnData.columns;
 		values = columnData.values;
 		for (i = 0, len = columns.length; i < len; i++) {
@@ -529,7 +529,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			me.executeSql(tx, 'DROP TABLE IF EXISTS ' + table.name, null, function(error) {
 				console.log('DROP TABLE IF EXISTS ' + table.name);
 				table.exists = false;
-				Ext.callback(callback, scope || me, [error != null, table, error]);
+				Ext.callback(callback, scope || me, [error !== null, table, error]);
 			});
 		});
 	},
@@ -551,7 +551,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			childType = model.prototype.childType;
 			model = childType && model.schema.getEntity(childType);
 		} 
-		while (model && !(childType in models))
+		while (model && !(childType in models));
 
 		barrier = Ext.Function.createBarrier(models.length, function() {
 			Ext.callback(callback, scope);

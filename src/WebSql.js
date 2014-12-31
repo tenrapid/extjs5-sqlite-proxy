@@ -33,7 +33,7 @@ Ext.define('tenrapid.data.proxy.WebSql', {
 					resultSet.rows = rows;
 				}
 				if (sql.substr(0, 6) == 'INSERT') {
-					resultSet.insertId = sqlResultSet.insertId
+					resultSet.insertId = sqlResultSet.insertId;
 				}
 				Ext.callback(callback, scope, [null, resultSet]);
 			},
