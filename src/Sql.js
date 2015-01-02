@@ -16,6 +16,8 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		table: null,
 
 		idParam: 'id',
+
+		debug: false
 	},
 
 	isSynchronous: false,
@@ -25,15 +27,26 @@ Ext.define('tenrapid.data.proxy.Sql', {
 	tables: {},
 
 	constructor: function(config) {
-		this.callParent(arguments);
+		var me = this;
+		me.callParent(arguments);
 
-		this.on('exception', function(proxy, operation) {
+		//<debug>
+		me.on('exception', function(proxy, operation) {
 			var errors = Ext.Array.from(operation.getError());
-			console.log('[E]\t Proxy exception:', operation.getError());
+			console.error('[E]\t Proxy exception:', operation.getError());
 			Ext.each(errors, function(error) {
 				console.log('\t', error.error.message, error);
 			});
 		});
+		//</debug>
+	},
+
+	log: function() {
+		//<debug>
+		if (this.debug) {
+			console.log.apply(console, arguments);
+		}
+		//</debug>
 	},
 
 	updateModel: function(model, oldModel) {
@@ -90,7 +103,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 	},
 
 	doRequest: function(operation) {
-		console.log('"' + operation.action + '" operation', operation);
+		this.log('"' + operation.action + '" operation', operation);
 		var request = this.buildRequest(operation);
 
 		this.queryDatabase(request.getCurrentConfig());
@@ -187,9 +200,10 @@ Ext.define('tenrapid.data.proxy.Sql', {
 	},
 
 	createTableIfNotExists: function (db, table, callback, scope) {
+		var me = this;
 		if (!table.exists) {
-			this.executeSql(db, 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + table.schemaString + ')', null, function(error) {
-				console.log('CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + table.schemaString + ')');
+			me.executeSql(db, 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + table.schemaString + ')', null, function(error) {
+				me.log('CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + table.schemaString + ')');
 				if (error === null) {
 					table.exists = true;
 				}
@@ -286,7 +300,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		}
 
 		me.executeSql(db, sql, null, function(error, resultSet) {
-			console.log(sql, request, resultSet.rows);
+			me.log(sql, '\n\trequest:', request, '\n\trows:', resultSet.rows);
 			Ext.callback(request.callback, request.scope || me, [error, resultSet.rows]);
 		});
 	},
@@ -311,7 +325,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 					row;
 
 				me.executeSql(db, query.sql, query.values, function(error, resultSet) {
-					console.log(query.sql, query.values, error || '');
+					me.log(query.sql, query.values, error || '');
 					if (error) {
 						errors.push({
 							id: id,
@@ -527,7 +541,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		}
 		me.serializeSqlExecution(db, function(tx) {
 			me.executeSql(tx, 'DROP TABLE IF EXISTS ' + table.name, null, function(error) {
-				console.log('DROP TABLE IF EXISTS ' + table.name);
+				me.log('DROP TABLE IF EXISTS ' + table.name);
 				table.exists = false;
 				Ext.callback(callback, scope || me, [error !== null, table, error]);
 			});
