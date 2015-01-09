@@ -48,15 +48,15 @@ Ext.define('tenrapid.data.proxy.Sqlite', {
 
 	getDatabaseObject: function() {
 		var filename = this.getFilename();
-		if (!filename) {
+		if (!Ext.isString(filename)) {
 			Ext.Error.raise('No filename for database given.');
 		}
 		return this.self.getDatabaseObject(filename);
 	},
 
-	closeDatabase: function() {
+	closeDatabase: function(callback, scope) {
 		var filename = this.getFilename();
-		this.self.closeDatabase(filename);
+		this.self.closeDatabase(filename, callback, scope);
 	},
 
 	destroy: function() {
@@ -72,13 +72,17 @@ Ext.define('tenrapid.data.proxy.Sqlite', {
 			return new this.sqlite3.Database(filename);
 		},
 
-		closeDatabase: function(filename) {
+		closeDatabase: function(filename, callback, scope) {
 			var database = this.databaseMap[filename];
 			if (database) {
-				database.opened--;
-				if (database.opened === 0) {
-					database.databaseObject.close();
-					delete this.databaseMap[filename];
+				delete this.databaseMap[filename];
+				if (Ext.isFunction(callback)) {
+					database.close(function() {
+						Ext.callback(callback, scope, arguments);
+					});
+				}
+				else {
+					database.close();
 				}
 			}
 		},

@@ -576,11 +576,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 	},
 
 	getDatabaseObject: function() {
-		var filename = this.getFilename();
-		if (!filename) {
-			Ext.Error.raise('No filename for database given.');
-		}
-		return this.self.getDatabaseObject(filename);
+		Ext.Error.raise("The getDatabaseObject function has not been implemented on this Ext.data.proxy.Sql subclass.");
 	},
 
 	destroy: function() {
@@ -595,15 +591,10 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			var database = this.databaseMap[name];
 
 			if (!database) {
-				database = {
-					databaseObject: this.openDatabase(name),
-					opened: 0,
-				};
+				database = this.openDatabase(name);
 				this.databaseMap[name] = database;
 			}
-			database.opened++;
-
-			return database.databaseObject;
+			return database;
 		},
 
 		openDatabase: function() {
