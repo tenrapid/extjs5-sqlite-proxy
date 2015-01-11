@@ -380,7 +380,9 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		}
 
 		return {
-			sql: 'INSERT INTO ' + table.name + ' (' + columns.join(', ') + ') VALUES (' + placeholders.join(', ') + ')',
+			sql: columns.length ?
+				'INSERT INTO ' + table.name + ' (' + columns.join(', ') + ') VALUES (' + placeholders.join(', ') + ')' :
+				'INSERT INTO ' + table.name + ' DEFAULT VALUES',
 			values: values,
 		};
 	},
