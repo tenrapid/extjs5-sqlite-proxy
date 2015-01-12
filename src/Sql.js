@@ -24,18 +24,18 @@ Ext.define('tenrapid.data.proxy.Sql', {
 
 	isHeterogeneousTreeStoreProxy: false,
 
-	tables: {},
+	tables: null,
 
 	constructor: function(config) {
-		var me = this;
-		me.callParent(arguments);
+		this.tables = {};
+		this.callParent(arguments);
 
 		//<debug>
-		me.on('exception', function(proxy, operation) {
+		this.on('exception', function(proxy, operation) {
 			var errors = Ext.Array.from(operation.getError());
 			console.error('[E]\t Proxy exception:', operation.getError());
 			Ext.each(errors, function(error) {
-				console.log('\t', error.error.message, error);
+				console.log('\t', error.error ? error.error.message : error.message, error);
 			});
 		});
 		//</debug>
