@@ -85,6 +85,9 @@ Ext.define('tenrapid.data.proxy.Sqlite', {
 					database.close();
 				}
 			}
+			else {
+				Ext.callback(callback, scope, [null]);
+			}
 		},
 
 	}
