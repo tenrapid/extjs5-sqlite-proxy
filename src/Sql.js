@@ -180,6 +180,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			exception,
 			resultSet;
 
+        me.fireEvent('beginprocessresponse', me, rows, operation);
 		if (error) {
 			operation.setException(error);
 			exception = true;
@@ -197,6 +198,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		if (exception) {
 			me.fireEvent('exception', me, operation);
 		}
+        me.fireEvent('endprocessresponse', me, rows, operation);
 	},
 
 	createTableIfNotExists: function (db, table, callback, scope) {
