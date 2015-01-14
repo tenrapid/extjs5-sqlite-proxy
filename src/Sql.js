@@ -441,7 +441,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 	},
 
 	getTableInfo: function(model) {
-		var uniqueIdStrategy = this.getUniqueIdStrategy() || (model.identifier ? !!model.identifier.isUnique : false),
+		var uniqueIdStrategy = this.getUniqueIdStrategy() || (!!model.identifier && model.identifier.isUnique),
 			idProperty = model.idField[this.getWriter().getNameProperty()] || model.idField.name,
 			clientIdProperty = model.clientIdProperty,
 			proto;
@@ -466,7 +466,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		var me = this,
 			schema = [],
 			fields = model.getFields(),
-			uniqueIdStrategy = model.identifier && model.identifier.isUnique,
+			uniqueIdStrategy = this.getUniqueIdStrategy() || (!!model.identifier && model.identifier.isUnique),
 			nameProperty = me.getWriter().getNameProperty(),
 			field, type, name,
 			i, ln;
