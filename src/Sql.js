@@ -34,11 +34,13 @@ Ext.define('tenrapid.data.proxy.Sql', {
 
 		//<debug>
 		this.on('exception', function(proxy, operation) {
-			var errors = Ext.Array.from(operation.getError());
-			console.error('[E]\t Proxy exception:', operation.getError());
-			Ext.each(errors, function(error) {
-				console.log('\t', error.error ? error.error.message : error.message, error);
-			});
+			var error = operation.getError();
+			console.error('[E]\t Proxy exception:', error);
+			if (Ext.isArray(error)) {
+				Ext.each(error, function(e) {
+					console.log('\t', e.error ? e.error.message : e.message, e);
+				});
+			}
 		});
 		//</debug>
 	},
@@ -191,10 +193,15 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			if (node && node.childType) {
 				reader = node.schema.getEntity(node.childType).getProxy().getReader();
 			}
-			resultSet = reader.read(rows, {
-				recordCreator: operation.getRecordCreator()
-			});
-			operation.process(resultSet);
+			try {
+				resultSet = reader.read(rows, {
+					recordCreator: operation.getRecordCreator()
+				});
+				operation.process(resultSet);
+			}
+			catch (e) {
+				operation.setException(e);
+			}
 			exception = !operation.wasSuccessful();
 		}
 		if (exception) {
