@@ -272,7 +272,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			i, ln, filter, sorter, property, value;
 
 		if (id !== undefined && parentIdProperty === undefined) {
-			sql += filterStatement + table.idProperty + ' = ' + id;
+			sql += filterStatement + '"' + table.idProperty + '" = ' + id;
 		}
 		else {
 			// handle start, limit, sort, filter and group params
@@ -283,7 +283,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 					property = table.columns[filter.getProperty()];
 					value = filter.getValue();
 					if (property !== null) {
-						sql += filterStatement + property + ' ' + (filter.getAnyMatch() ? ('LIKE \'%' + value + '%\'') : ('= \'' + value + '\''));
+						sql += filterStatement + '"' + property + '" ' + (filter.getAnyMatch() ? ('LIKE \'%' + value + '%\'') : ('= \'' + value + '\''));
 						filterStatement = ' AND ';
 					}
 				}
@@ -416,7 +416,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 		}
 
 		return {
-			sql: 'UPDATE ' + table.name + ' SET ' + updates.join(', ') + ' WHERE ' + table.idProperty + ' = ?',
+			sql: 'UPDATE ' + table.name + ' SET ' + updates.join(', ') + ' WHERE "' + table.idProperty + '" = ?',
 			values: values,
 		};
 	},
@@ -426,7 +426,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			id = record.getId();
 
 		return {
-			sql: 'DELETE FROM ' + table.name + ' WHERE ' + table.idProperty + ' = ?',
+			sql: 'DELETE FROM ' + table.name + ' WHERE "' + table.idProperty + '" = ?',
 			values: [id],
 		};
 	},
@@ -437,7 +437,7 @@ Ext.define('tenrapid.data.proxy.Sql', {
 
 		Ext.iterate(table.columns, function(field, column) {
 			if (column in data) {
-				columns.push(column);
+				columns.push('"' + column + '"');
 				values.push(data[column]);
 			}
 		});
@@ -489,13 +489,13 @@ Ext.define('tenrapid.data.proxy.Sql', {
 			if (field.identifier) {
 				if (uniqueIdStrategy) {
 					type = me.convertToSqlType(type);
-					schema.unshift(name + ' ' + type + ' PRIMARY KEY');
+					schema.unshift('"' + name + '" ' + type + ' PRIMARY KEY');
 				} else {
-					schema.unshift(name + ' INTEGER PRIMARY KEY AUTOINCREMENT');
+					schema.unshift('"' + name + '" INTEGER PRIMARY KEY AUTOINCREMENT');
 				}
 			} else {
 				type = me.convertToSqlType(type);
-				schema.push(name + ' ' + type);
+				schema.push('"' + name + '" ' + type);
 			}
 		}
 
